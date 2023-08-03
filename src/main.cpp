@@ -5,7 +5,7 @@
 #define DOUT 2
 #define CLK 3
 
-#define FILTER_SIZE 1000  // Size of the filter window. Adjust this as necessary
+#define FILTER_SIZE 10  // Size of the filter window. Adjust this as necessary
 
 float filterBuffer[FILTER_SIZE];  // Buffer to hold past readings
 int filterIndex = 0;  // Index for the current position in the buffer
