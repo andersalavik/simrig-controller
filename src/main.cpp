@@ -5,6 +5,12 @@
 #define DOUT 2
 #define CLK 3
 
+#define FILTER_SIZE 10  // Size of the filter window. Adjust this as necessary
+
+float filterBuffer[FILTER_SIZE];  // Buffer to hold past readings
+int filterIndex = 0;  // Index for the current position in the buffer
+
+
 // Enum for the curve type
 enum curveType { LINEAR, EXPONENTIAL, LOGARITHMIC };
 
@@ -155,17 +161,28 @@ void loop() {
   // Read handbrake value
   float rawHandbrake = handbrakeScale.get_units();
 
-  // Apply curve
-  applyCurve(rawHandbrake, currentSettings.handbrakeCurve, currentSettings.curveFactor);
+  // Add reading to filter buffer
+  filterBuffer[filterIndex] = rawHandbrake;
+  filterIndex = (filterIndex + 1) % FILTER_SIZE;  // Increment index and wrap around
+
+  // Calculate average of past readings
+  float avgHandbrake = 0;
+  for (int i = 0; i < FILTER_SIZE; i++) {
+    avgHandbrake += filterBuffer[i];
+  }
+  avgHandbrake /= FILTER_SIZE;
+
+  // Apply curve to the average reading
+  applyCurve(avgHandbrake, currentSettings.handbrakeCurve, currentSettings.curveFactor);
 
   // Set brake value on joystick
-  myJoystick.setBrake(rawHandbrake);
+  myJoystick.setBrake(avgHandbrake);
 
   // Check if setup mode is active
   if (setupMode) {
     // Print raw and processed handbrake value
     Serial.print("Raw Handbrake Value: ");
-    Serial.print(handbrakeScale.get_units());
+    Serial.print(avgHandbrake);  // Use the averaged value here
     Serial.print("   Processed Handbrake Value: ");
     Serial.println(rawHandbrake);
   }
