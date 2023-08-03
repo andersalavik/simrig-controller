@@ -40,6 +40,11 @@ void setup() {
   // Load settings from EEPROM
   EEPROM.get(0, currentSettings);
 
+  // Initialize filter buffer with zeros
+  for (int i = 0; i < FILTER_SIZE; i++) {
+    filterBuffer[i] = 0;
+  }
+  
   // Check if settings are valid
   if (currentSettings.handbrakeCurve < LINEAR || currentSettings.handbrakeCurve > LOGARITHMIC || currentSettings.minRawHandbrake < 0 || currentSettings.maxRawHandbrake > 900000 || currentSettings.curveFactor <= 0) {
     // If not valid, use default settings
