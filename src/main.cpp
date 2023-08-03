@@ -148,7 +148,7 @@ void loop() {
         Serial.print("Curve factor: ");
         Serial.println(currentSettings.curveFactor);
         break;
-      }
+      
     }
   }
 
