@@ -128,6 +128,27 @@ void loop() {
       case 'e':  // Toggle setup mode
         setupMode = !setupMode;
         break;
+      case 'r':  // Read current settings
+        Serial.print("Curve type: ");
+        switch(currentSettings.handbrakeCurve) {
+          case LINEAR:
+            Serial.println("LINEAR");
+            break;
+          case EXPONENTIAL:
+            Serial.println("EXPONENTIAL");
+            break;
+          case LOGARITHMIC:
+            Serial.println("LOGARITHMIC");
+            break;
+        }
+        Serial.print("Min raw handbrake: ");
+        Serial.println(currentSettings.minRawHandbrake);
+        Serial.print("Max raw handbrake: ");
+        Serial.println(currentSettings.maxRawHandbrake);
+        Serial.print("Curve factor: ");
+        Serial.println(currentSettings.curveFactor);
+        break;
+      }
     }
   }
 
