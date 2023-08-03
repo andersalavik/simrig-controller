@@ -1,4 +1,4 @@
-# Arduino Handbrake Simulator
+# Handbrake Controller
 
 This project is a handbrake simulator built using Arduino. It uses the HX711 amplifier for load cells and the Arduino Joystick library to simulate the action of a handbrake. 
 
