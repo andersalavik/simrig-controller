@@ -135,7 +135,10 @@ void loop() {
         EEPROM.put(0, currentSettings);
         break;
       case 'e':  // Toggle setup mode
-        setupMode = !setupMode;
+        setupMode = true;
+        break;
+      case 'w':  // Toggle setup mode
+        setupMode = false;
         break;
       case 'r':  // Read current settings
         Serial.print("Curve type: ");
