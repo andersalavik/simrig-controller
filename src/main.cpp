@@ -20,7 +20,7 @@ struct Settings {
 };
 
 // Define default settings
-Settings defaultSettings = { LINEAR, 0, 900000, 2.0 };
+Settings defaultSettings = { LINEAR, -5200, 50000, 2.0 };
 
 // Variable to hold current settings
 Settings currentSettings;
