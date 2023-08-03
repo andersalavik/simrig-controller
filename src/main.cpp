@@ -20,7 +20,7 @@ struct Settings {
 };
 
 // Define default settings
-Settings defaultSettings = { LINEAR, -5200, 50000, 2.0 };
+Settings defaultSettings = { EXPONENTIAL, 10000.00, 2095588, 2.0 };
 
 // Variable to hold current settings
 Settings currentSettings;
@@ -32,10 +32,10 @@ bool setupMode = false; // Added setup mode flag
 
 void setup() {
   // Load settings from EEPROM
-  //EEPROM.get(0, currentSettings);
+  EEPROM.get(0, currentSettings);
 
   // Check if settings are valid
-  if (currentSettings.handbrakeCurve < LINEAR || currentSettings.handbrakeCurve > LOGARITHMIC || currentSettings.minRawHandbrake < 1000 || currentSettings.maxRawHandbrake > 900000 || currentSettings.curveFactor <= 0) {
+  if (currentSettings.handbrakeCurve < LINEAR || currentSettings.handbrakeCurve > LOGARITHMIC || currentSettings.minRawHandbrake < -9000000 || currentSettings.maxRawHandbrake > 90000000 || currentSettings.curveFactor <= 0) {
     // If not valid, use default settings
     currentSettings = defaultSettings;
   }
@@ -98,37 +98,39 @@ void loop() {
     // Handle the command
     switch(command) {
       case 'c':  // Change curve type
-        if (Serial.available() >= sizeof(int)) {
+        if (Serial.available() > 0) {
           curveType newCurve = (curveType)Serial.parseInt();
           if (newCurve >= LINEAR && newCurve <= LOGARITHMIC) {
             currentSettings.handbrakeCurve = newCurve;
           }
         }
+
         break;
       case 'm':  // Change minRawHandbrake
         if (Serial.available() >= sizeof(float)) {
           float newMin = Serial.parseFloat();
-          if (newMin >= 0) {
+          if (newMin >= -900000) {
             currentSettings.minRawHandbrake = newMin;
           }
         }
         break;
-      case 'M':  // Change maxRawHandbrake
+      case 't':  // Change maxRawHandbrake
         if (Serial.available() >= sizeof(float)) {
           float newMax = Serial.parseFloat();
-          if (newMax <= 900000) {
+          if (newMax <= 9000000) {
             currentSettings.maxRawHandbrake = newMax;
           }
         }
         break;
       case 'f':  // Change curveFactor
-        if (Serial.available() >= sizeof(float)) {
-          float newFactor = Serial.parseFloat();
-          if (newFactor > 0) {
-            currentSettings.curveFactor = newFactor;
+        if (Serial.available() > 0) {
+          int newFactor = Serial.parseInt();
+          if (newFactor >= 0) {
+            currentSettings.curveFactor = float(newFactor) / 10.0;
           }
         }
         break;
+
       case 's':  // Save settings
         EEPROM.put(0, currentSettings);
         break;
@@ -153,7 +155,8 @@ void loop() {
         Serial.print("Max raw handbrake: ");
         Serial.println(currentSettings.maxRawHandbrake);
         Serial.print("Curve factor: ");
-        Serial.println(currentSettings.curveFactor);
+        Serial.println(currentSettings.curveFactor*10);
+        Serial.print(currentSettings.handbrakeCurve);
         break;
       
     }
