@@ -5,8 +5,8 @@
 // These are pin assignments for various components
 #define DOUT 2
 #define CLK 3
-#define GUP 9
-#define GDOWN 10
+#define GUP 7
+#define GDOWN 8
 
 enum curveType { LINEAR, EXPONENTIAL, LOGARITHMIC };
 

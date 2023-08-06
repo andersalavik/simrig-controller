@@ -12,11 +12,33 @@ Many thanks go to ChatGPT and CoPilot for their invaluable assistance in realizi
 
 ## Requirements
 
-- Arduino Board
-- HX711 amplifier
-- Load cell
-- Two momentary switches for gear shifting
-- Arduino IDE or PlatformIO IDE
+* Arduino Board
+* HX711 amplifier
+* Load cell
+* Two momentary switches for gear shifting
+* Arduino IDE or PlatformIO IDE
+
+## Connections
+
+The load cell is connected to the HX711 amplifier, which is then connected to the Arduino board. The momentary switches are connected to the Arduino board as well. The connections are as follows:
+
+* HX711 amplifier:
+  * Arduino:
+    * VCC -> 5V
+    * GND -> GND
+    * DT -> D2
+    * SCK -> D3
+  * Load cell:
+    * Red -> E+
+    * Black -> E-
+    * White -> A-
+    * Green -> A+
+* Momentary switches:
+  * Arduino:
+    * Gear up -> D7 , GND
+    * Gear down -> D8, GND
+
+![Connections](./simrig-controller_bb.png)
 
 ## Usage
 
@@ -28,37 +50,37 @@ Many thanks go to ChatGPT and CoPilot for their invaluable assistance in realizi
 
 Available commands include:
 
-- `c`: Change curve type (send integer value between 0-2, where 0 = LINEAR, 1 = EXPONENTIAL, 2 = LOGARITHMIC)
-- `m`: Change minimum raw handbrake value (send float value)
-- `t`: Change maximum raw handbrake value (send float value)
-- `f`: Change curve factor (send integer value, which is divided by 10 in the code)
-- `s`: Save current settings to EEPROM
-- `e`: Enable setup mode
-- `w`: Disable setup mode
-- `r`: Read and print current settings
+* `c`: Change curve type (send integer value between 0-2, where 0 = LINEAR, 1 = EXPONENTIAL, 2 = LOGARITHMIC)
+* `m`: Change minimum raw handbrake value (send float value)
+* `t`: Change maximum raw handbrake value (send float value)
+* `f`: Change curve factor (send integer value, which is divided by 10 in the code)
+* `s`: Save current settings to EEPROM
+* `e`: Enable setup mode
+* `w`: Disable setup mode
+* `r`: Read and print current settings
 
 When setup mode is enabled (`e` command), the raw and processed handbrake values, as well as gear up and down actions, are printed to the serial port.
 
 ## Troubleshooting/FAQ
 
-- **Serial communication is not working**: Ensure your Arduino is correctly connected and the appropriate COM port is selected in your IDE. Additionally, verify that the baud rate in your Arduino IDE matches the baud rate set in the code (9600).
+* **Serial communication is not working**: Ensure your Arduino is correctly connected and the appropriate COM port is selected in your IDE. Additionally, verify that the baud rate in your Arduino IDE matches the baud rate set in the code (9600).
   
-- **The curve factor is not changing**: Multiply your desired factor by 10 before sending, as the code divides the input by 10. For example, if you want a factor of 1.5, send 15.
+* **The curve factor is not changing**: Multiply your desired factor by 10 before sending, as the code divides the input by 10. For example, if you want a factor of 1.5, send 15.
 
-- **Values aren't saved after power loss**: After adjusting the settings, use the 's' command to store the current settings to the EEPROM.
+* **Values aren't saved after power loss**: After adjusting the settings, use the 's' command to store the current settings to the EEPROM.
 
-- **The handbrake isn't responsive or is behaving erratically**: Confirm the load cell and HX711 amplifier are correctly connected and functioning. Check your wiring and consider calibrating the load cell.
+* **The handbrake isn't responsive or is behaving erratically**: Confirm the load cell and HX711 amplifier are correctly connected and functioning. Check your wiring and consider calibrating the load cell.
 
-- **Gear shifting is not working correctly**: Check the wiring and connections of your momentary switches. Make sure the code corresponds to the correct pins on the Arduino board.
+* **Gear shifting is not working correctly**: Check the wiring and connections of your momentary switches. Make sure the code corresponds to the correct pins on the Arduino board.
 
 ## Contributing
 
 Contributions are welcome and greatly appreciated! You can help improve the Handbrake Controller project in many ways. For instance:
 
-- Submit bugs and feature requests, and help verify them as they are checked in.
-- Review source code changes.
-- Engage with other Handbrake Controller users and developers on GitHub.
-- Contribute bug fixes or new features.
+* Submit bugs and feature requests, and help verify them as they are checked in.
+* Review source code changes.
+* Engage with other Handbrake Controller users and developers on GitHub.
+* Contribute bug fixes or new features.
 
 Before you contribute, please read through the contributing guide. Here is a quick guide on how to contribute:
 
