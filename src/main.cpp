@@ -26,7 +26,7 @@ Settings defaultSettings = { EXPONENTIAL, 10000.00, 2095588, 2.0 };
 Settings currentSettings;
 
 // Joystick object
-Joystick_ myJoystick(JOYSTICK_DEFAULT_REPORT_ID + 7, JOYSTICK_TYPE_MULTI_AXIS, 0, 0, false, false, false, false, false, false, false, true, false, true, false);
+Joystick_ myJoystick(JOYSTICK_DEFAULT_REPORT_ID + 7, JOYSTICK_TYPE_MULTI_AXIS, 0, 0, true, false, false, false, false, false, false, true, false, true, false);
 
 bool setupMode = false; // Added setup mode flag
 
@@ -50,7 +50,7 @@ void setup() {
   handbrakeScale.tare();  // Tare the scale
 
   // Initialize joystick
-  myJoystick.setBrakeRange(0, 1023);  // Set brake range
+  myJoystick.setXAxisRange(0, 1023);  // Set brake range
   myJoystick.begin(true);  // Start joystick in auto send mode
 
   digitalWrite(LED_BUILTIN, LOW);  // Indicate end of setup
@@ -173,7 +173,7 @@ void loop() {
   applyCurve(rawHandbrake, currentSettings.handbrakeCurve, currentSettings.curveFactor);
 
   // Set brake value on joystick
-  myJoystick.setBrake(rawHandbrake);
+  myJoystick.setXAxis(rawHandbrake);
 
   // Check if setup mode is active
   if (setupMode) {
