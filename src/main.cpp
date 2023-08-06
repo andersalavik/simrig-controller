@@ -2,6 +2,7 @@
 #include "HX711.h"
 #include "Joystick.h"
 
+// These are pin assignments for various components
 #define DOUT 2
 #define CLK 3
 #define GUP 9
@@ -9,7 +10,7 @@
 
 enum curveType { LINEAR, EXPONENTIAL, LOGARITHMIC };
 
-HX711 handbrakeScale;
+HX711 handbrakeScale; // Object for handling the HX711 scale
 Joystick_ Joystick(JOYSTICK_DEFAULT_REPORT_ID + 7, JOYSTICK_TYPE_MULTI_AXIS, 2, 0, false, false, true, false, false, false, false, true, false, true, false);
 
 struct Settings {
@@ -19,6 +20,7 @@ struct Settings {
   float curveFactor;
 };
 
+// Default settings for the handbrake processing
 Settings defaultSettings = { EXPONENTIAL, 10000.00, 2095588, 2.0 };
 Settings currentSettings;
 bool setupMode = false;
@@ -26,24 +28,37 @@ int lastGUpState = 0;
 int lastGDownState = 0;
 
 void setup() {
+  // Retrieve settings from EEPROM or set defaults if values in EEPROM are out of range
   EEPROM.get(0, currentSettings);
   if (currentSettings.handbrakeCurve < LINEAR || currentSettings.handbrakeCurve > LOGARITHMIC || currentSettings.minRawHandbrake < -9000000 || currentSettings.maxRawHandbrake > 90000000 || currentSettings.curveFactor <= 0) {
     currentSettings = defaultSettings;
   }
+  
+  // LED setup
   pinMode(LED_BUILTIN, OUTPUT);
   digitalWrite(LED_BUILTIN, HIGH); 
+  
+  // Setup of pins for Up and Down buttons
   pinMode(GUP, INPUT_PULLUP);
   pinMode(GDOWN, INPUT_PULLUP);
+  
+  // Handbrake scale setup
   handbrakeScale.begin(DOUT, CLK);
   handbrakeScale.set_scale();
   handbrakeScale.tare();  
+  
+  // Joystick setup
   Joystick.setZAxisRange(0, 1023);  
   Joystick.setButton(0,0);
   Joystick.setButton(1,0);
   Joystick.begin(true); 
+  
   digitalWrite(LED_BUILTIN, LOW);  
+  
+  // Serial communication setup
   Serial.begin(9600);
 }
+
 
 void applyCurve(float& val, curveType curve, float curveFactor) {
   val = val - currentSettings.minRawHandbrake;
