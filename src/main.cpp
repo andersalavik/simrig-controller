@@ -4,6 +4,8 @@
 
 #define DOUT 2
 #define CLK 3
+#define GUP 9
+#define GDOWN 10
 
 // Enum for the curve type
 enum curveType { LINEAR, EXPONENTIAL, LOGARITHMIC };
@@ -26,7 +28,7 @@ Settings defaultSettings = { EXPONENTIAL, 10000.00, 2095588, 2.0 };
 Settings currentSettings;
 
 // Joystick object
-Joystick_ myJoystick(JOYSTICK_DEFAULT_REPORT_ID + 7, JOYSTICK_TYPE_MULTI_AXIS, 0, 0, true, false, false, false, false, false, false, true, false, true, false);
+Joystick_ myJoystick(JOYSTICK_DEFAULT_REPORT_ID + 7, JOYSTICK_TYPE_MULTI_AXIS, 2, 0, false, false, true, false, false, false, false, true, false, true, false);
 
 bool setupMode = false; // Added setup mode flag
 
@@ -43,18 +45,31 @@ void setup() {
   // Setup LED
   pinMode(LED_BUILTIN, OUTPUT);
   digitalWrite(LED_BUILTIN, HIGH);  // Indicate start of setup
-
+  pinMode(GUP, INPUT_PULLUP);
+  pinMode(GDOWN, INPUT_PULLUP);
   // Initialize HX711
   handbrakeScale.begin(DOUT, CLK);
   handbrakeScale.set_scale();
   handbrakeScale.tare();  // Tare the scale
 
   // Initialize joystick
-  myJoystick.setXAxisRange(0, 1023);  // Set brake range
+  myJoystick.setZAxisRange(0, 1023);  // Set brake range
+  myJoystick.setButton(0,0);
+  myJoystick.setButton(1,0);
   myJoystick.begin(true);  // Start joystick in auto send mode
+
+
+  int lastGUpState = 0;
+  int lastGDownState = 0;
+
+
+
 
   digitalWrite(LED_BUILTIN, LOW);  // Indicate end of setup
   
+
+
+
   // Initialize Serial
   Serial.begin(9600);
 }
@@ -173,7 +188,26 @@ void loop() {
   applyCurve(rawHandbrake, currentSettings.handbrakeCurve, currentSettings.curveFactor);
 
   // Set brake value on joystick
-  myJoystick.setXAxis(rawHandbrake);
+  myJoystick.setZAxis(rawHandbrake);
+
+  int lastGUpState = 0;
+  int lastGDownState = 0;
+
+  // Gear controll
+  int currentGUpState = !digitalRead(GUP);
+  int currentGDownState = !digitalRead(GDOWN);
+
+    if (currentGUpState != lastGUpState)
+    {
+      myJoystick.setButton(0, currentGUpState);
+      lastGUpState = currentGUpState;
+    }
+
+        if (currentGDownState != lastGDownState)
+    {
+      myJoystick.setButton(1, currentGDownState);
+      lastGDownState = currentGDownState;
+    }
 
   // Check if setup mode is active
   if (setupMode) {
